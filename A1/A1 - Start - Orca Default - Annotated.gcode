@@ -90,9 +90,9 @@ M104 S{nozzle_temperature_initial_layer[initial_extruder]} ; Sets the nozzle tem
 
 M1002 judge_flag build_plate_detect_flag ; Evaluates the build plate detection flag.
 M622 S1 ; Enables a custom feature or setting (exact functionality unknown).
-	G39.4 ; Custom G-code command (specific to firmware).
-	G90 ; Switches back to absolute positioning.
-	G1 Z5 F1200 ; Lifts the Z-axis by 5mm.
+    G39.4 ; Custom G-code command (specific to firmware).
+    G90 ; Switches back to absolute positioning.
+    G1 Z5 F1200 ; Lifts the Z-axis by 5mm.
 M623 ; Ends the custom sequence started by M622.
 
 ;M400 ; Ensures all movements are complete before proceeding (commented out).
@@ -112,23 +112,23 @@ G1 X-48.2 F3000 ; Moves to X = -48.2mm at slower speed (3000 mm/min).
 
 M620 M ;enable remap ; Enables material remapping, used for AMS (Automatic Material Switching).
 M620 S[initial_no_support_extruder]A ; Selects the initial extruder (with no support material) in AMS if present.
-	M1002 gcode_claim_action : 4 ; Claims an action, possibly for filament preparation.
-	M400 ; Waits for all commands to complete.
-	M1002 set_filament_type:UNKNOWN ; Temporarily sets the filament type to UNKNOWN.
-	M109 S[nozzle_temperature_initial_layer] ; Sets and waits for the nozzle temperature to reach the initial layer temperature.
-	M104 S250 ; Sets the nozzle temperature to 250°C without waiting.
-	M400 ; Waits for commands to complete.
-	T[initial_no_support_extruder] ; Selects the specified extruder dynamically replaced by slicer.
-	G1 X-48.2 F3000 ; Moves to X = -48.2mm at 3000 mm/min.
-	M400 ; Waits for all commands to complete.
+    M1002 gcode_claim_action : 4 ; Claims an action, possibly for filament preparation.
+    M400 ; Waits for all commands to complete.
+    M1002 set_filament_type:UNKNOWN ; Temporarily sets the filament type to UNKNOWN.
+    M109 S[nozzle_temperature_initial_layer] ; Sets and waits for the nozzle temperature to reach the initial layer temperature.
+    M104 S250 ; Sets the nozzle temperature to 250°C without waiting.
+    M400 ; Waits for commands to complete.
+    T[initial_no_support_extruder] ; Selects the specified extruder dynamically replaced by slicer.
+    G1 X-48.2 F3000 ; Moves to X = -48.2mm at 3000 mm/min.
+    M400 ; Waits for all commands to complete.
 
-	M620.1 E F{filament_max_volumetric_speed[initial_no_support_extruder]/2.4053*60} T{nozzle_temperature_range_high[initial_no_support_extruder]} ; Configures extruder for volumetric speed and temperature range.
-	M109 S250 ;set nozzle to common flush temp ; Sets and waits for the nozzle temperature to stabilize at 250°C.
-	M106 P1 S0 ; Turns off fan 1 (P1).
-	G92 E0 ; Resets the extruder position to zero.
-	G1 E50 F200 ; Extrudes 50mm of filament at 200 mm/min.
-	M400 ; Waits for all commands to complete.
-	M1002 set_filament_type:{filament_type[initial_no_support_extruder]} ; Sets the filament type dynamically for the initial extruder.
+    M620.1 E F{filament_max_volumetric_speed[initial_no_support_extruder]/2.4053*60} T{nozzle_temperature_range_high[initial_no_support_extruder]} ; Configures extruder for volumetric speed and temperature range.
+    M109 S250 ;set nozzle to common flush temp ; Sets and waits for the nozzle temperature to stabilize at 250°C.
+    M106 P1 S0 ; Turns off fan 1 (P1).
+    G92 E0 ; Resets the extruder position to zero.
+    G1 E50 F200 ; Extrudes 50mm of filament at 200 mm/min.
+    M400 ; Waits for all commands to complete.
+    M1002 set_filament_type:{filament_type[initial_no_support_extruder]} ; Sets the filament type dynamically for the initial extruder.
 M621 S[initial_no_support_extruder]A ; Confirms the selected extruder and material setup in AMS.
 
 M109 S{nozzle_temperature_range_high[initial_no_support_extruder]} H300 ; Sets and waits for the nozzle to reach the high temperature range, up to 300°C.
@@ -182,50 +182,50 @@ M1002 set_filament_type:{filament_type[initial_no_support_extruder]} ; Restores 
 M1002 judge_flag extrude_cali_flag ; Evaluates the extrusion calibration flag.
 
 M622 J1 ; Begins a calibration sequence for extrusion parameters.
-	M1002 gcode_claim_action : 8 ; Claims action 8, likely related to extrusion calibration.
-	
-	M109 S{nozzle_temperature[initial_extruder]} ; Sets and waits for the nozzle temperature dynamically based on the extruder settings.
-	G1 E10 F{outer_wall_volumetric_speed/2.4*60} ; Extrudes 10mm of filament at a speed based on wall volumetric speed.
-	M983 F{outer_wall_volumetric_speed/2.4} A0.3 H[nozzle_diameter]; cali dynamic extrusion compensation ; Performs dynamic extrusion compensation.
-	
-	M106 P1 S255 ; Turns on fan 1 (P1) at full speed (255).
-	M400 S5 ; Waits for 5 seconds.
-	G1 X-28.5 F18000 ; Moves to X = -28.5mm at 18000 mm/min.
-	G1 X-48.2 F3000 ; Moves to X = -48.2mm at 3000 mm/min.
-	G1 X-28.5 F18000 ;wipe and shake ; Wipes and shakes the nozzle by moving to X = -28.5mm at high speed.
-	G1 X-48.2 F3000 ; Moves to X = -48.2mm at slower speed for the shake.
-	G1 X-28.5 F12000 ;wipe and shake ; Repeats the wipe and shake action at a slightly slower speed.
-	G1 X-48.2 F3000 ; Moves to X = -48.2mm at slower speed.
-	M400 ; Ensures all movements are complete.
-	M106 P1 S0 ; Turns off fan 1 (P1).
-	
-	M1002 judge_last_extrude_cali_success ; Checks if the last extrusion calibration was successful.
-	M622 J0 ; Exits the calibration sequence if successful.
-		M983 F{outer_wall_volumetric_speed/2.4} A0.3 H[nozzle_diameter]; cali dynamic extrusion compensation ; Repeats the dynamic extrusion compensation process.
-		M106 P1 S255 ; Turns on fan 1 (P1) at full speed.
-		M400 S5 ; Waits for 5 seconds.
-		G1 X-28.5 F18000 ; Moves to X = -28.5mm at 18000 mm/min.
-		G1 X-48.2 F3000 ; Moves to X = -48.2mm at 3000 mm/min.
-		G1 X-28.5 F18000 ;wipe and shake ; Repeats the wipe and shake action at high speed.
-		G1 X-48.2 F3000 ; Moves to X = -48.2mm at slower speed.
-		G1 X-28.5 F12000 ;wipe and shake ; Performs the wipe and shake action at moderate speed.
-		M400 ; Ensures all movements are complete.
-		M106 P1 S0 ; Turns off fan 1 (P1).
-	M623 ; Ends the extrusion calibration sequence.
+    M1002 gcode_claim_action : 8 ; Claims action 8, likely related to extrusion calibration.
+    
+    M109 S{nozzle_temperature[initial_extruder]} ; Sets and waits for the nozzle temperature dynamically based on the extruder settings.
+    G1 E10 F{outer_wall_volumetric_speed/2.4*60} ; Extrudes 10mm of filament at a speed based on wall volumetric speed.
+    M983 F{outer_wall_volumetric_speed/2.4} A0.3 H[nozzle_diameter]; cali dynamic extrusion compensation ; Performs dynamic extrusion compensation.
+    
+    M106 P1 S255 ; Turns on fan 1 (P1) at full speed (255).
+    M400 S5 ; Waits for 5 seconds.
+    G1 X-28.5 F18000 ; Moves to X = -28.5mm at 18000 mm/min.
+    G1 X-48.2 F3000 ; Moves to X = -48.2mm at 3000 mm/min.
+    G1 X-28.5 F18000 ;wipe and shake ; Wipes and shakes the nozzle by moving to X = -28.5mm at high speed.
+    G1 X-48.2 F3000 ; Moves to X = -48.2mm at slower speed for the shake.
+    G1 X-28.5 F12000 ;wipe and shake ; Repeats the wipe and shake action at a slightly slower speed.
+    G1 X-48.2 F3000 ; Moves to X = -48.2mm at slower speed.
+    M400 ; Ensures all movements are complete.
+    M106 P1 S0 ; Turns off fan 1 (P1).
+    
+    M1002 judge_last_extrude_cali_success ; Checks if the last extrusion calibration was successful.
+    M622 J0 ; Exits the calibration sequence if successful.
+        M983 F{outer_wall_volumetric_speed/2.4} A0.3 H[nozzle_diameter]; cali dynamic extrusion compensation ; Repeats the dynamic extrusion compensation process.
+        M106 P1 S255 ; Turns on fan 1 (P1) at full speed.
+        M400 S5 ; Waits for 5 seconds.
+        G1 X-28.5 F18000 ; Moves to X = -28.5mm at 18000 mm/min.
+        G1 X-48.2 F3000 ; Moves to X = -48.2mm at 3000 mm/min.
+        G1 X-28.5 F18000 ;wipe and shake ; Repeats the wipe and shake action at high speed.
+        G1 X-48.2 F3000 ; Moves to X = -48.2mm at slower speed.
+        G1 X-28.5 F12000 ;wipe and shake ; Performs the wipe and shake action at moderate speed.
+        M400 ; Ensures all movements are complete.
+        M106 P1 S0 ; Turns off fan 1 (P1).
+    M623 ; Ends the extrusion calibration sequence.
 
-	G1 X-48.2 F3000 ; Moves to X = -48.2mm at slower speed.
-	M400 ; Ensures all commands are complete.
-	M984 A0.1 E1 S1 F{outer_wall_volumetric_speed/2.4} H[nozzle_diameter] ; Applies fine adjustments to extrusion parameters.
-	M106 P1 S178 ; Sets fan 1 (P1) to a moderate speed (178).
-	M400 S7 ; Waits for 7 seconds.
-	G1 X-28.5 F18000 ; Moves to X = -28.5mm at high speed (18000 mm/min).
-	G1 X-48.2 F3000 ; Moves to X = -48.2mm at slower speed.
-	G1 X-28.5 F18000 ;wipe and shake ; Repeats the wipe and shake process.
-	G1 X-48.2 F3000 ; Moves to X = -48.2mm at slower speed.
-	G1 X-28.5 F12000 ;wipe and shake ; Performs the wipe and shake action at a slightly slower speed.
-	G1 X-48.2 F3000 ; Moves to X = -48.2mm at slower speed.
-	M400 ; Ensures all commands are complete.
-	M106 P1 S0 ; Turns off fan 1 (P1).
+    G1 X-48.2 F3000 ; Moves to X = -48.2mm at slower speed.
+    M400 ; Ensures all commands are complete.
+    M984 A0.1 E1 S1 F{outer_wall_volumetric_speed/2.4} H[nozzle_diameter] ; Applies fine adjustments to extrusion parameters.
+    M106 P1 S178 ; Sets fan 1 (P1) to a moderate speed (178).
+    M400 S7 ; Waits for 7 seconds.
+    G1 X-28.5 F18000 ; Moves to X = -28.5mm at high speed (18000 mm/min).
+    G1 X-48.2 F3000 ; Moves to X = -48.2mm at slower speed.
+    G1 X-28.5 F18000 ;wipe and shake ; Repeats the wipe and shake process.
+    G1 X-48.2 F3000 ; Moves to X = -48.2mm at slower speed.
+    G1 X-28.5 F12000 ;wipe and shake ; Performs the wipe and shake action at a slightly slower speed.
+    G1 X-48.2 F3000 ; Moves to X = -48.2mm at slower speed.
+    M400 ; Ensures all commands are complete.
+    M106 P1 S0 ; Turns off fan 1 (P1).
 M623 ; end of "draw extrinsic para cali paint" ; Ends the parameter calibration sequence.
 
 ;G392 S0 ; Disables PWM fans (commented out).
@@ -541,49 +541,49 @@ M104 S{nozzle_temperature_initial_layer[initial_extruder]} ; prepare to print ; 
 ;===== extrude cali test ===============================
 
 M400 ; Ensures all movements are complete.
-	M900 S ; Specific command for calibration, possibly setting parameters.
-	M900 C ; Specific command for calibration, possibly clearing parameters.
-	G90 ; Ensures absolute positioning.
-	M83 ; Ensures extruder is in relative mode.
+    M900 S ; Specific command for calibration, possibly setting parameters.
+    M900 C ; Specific command for calibration, possibly clearing parameters.
+    G90 ; Ensures absolute positioning.
+    M83 ; Ensures extruder is in relative mode.
 
-	M109 S{nozzle_temperature_initial_layer[initial_extruder]} ; Sets and waits for nozzle temperature for calibration.
-	G0 X128 E8  F{outer_wall_volumetric_speed/(24/20)    * 60} ; Moves and extrudes filament for calibration.
-	; Performs additional movements with extrusion:
-	G0 X133 E.3742  F{outer_wall_volumetric_speed/(0.3*0.5)/4     * 60}
-	G0 X138 E.3742  F{outer_wall_volumetric_speed/(0.3*0.5)     * 60}
-	G0 X143 E.3742  F{outer_wall_volumetric_speed/(0.3*0.5)/4     * 60}
-	G0 X148 E.3742  F{outer_wall_volumetric_speed/(0.3*0.5)     * 60}
-	G0 X153 E.3742  F{outer_wall_volumetric_speed/(0.3*0.5)/4     * 60}
-	G91 ; Switches to relative positioning.
-	G1 X1 Z-0.300 ; Makes fine adjustment in X and Z axes.
-	G1 X4 ; Moves X by 4mm.
-	G1 Z1 F1200 ; Raises nozzle to Z = 1mm.
-	G90 ; Returns to absolute positioning.
-	M400 ; Ensures all movements are complete.
+    M109 S{nozzle_temperature_initial_layer[initial_extruder]} ; Sets and waits for nozzle temperature for calibration.
+    G0 X128 E8  F{outer_wall_volumetric_speed/(24/20)    * 60} ; Moves and extrudes filament for calibration.
+    ; Performs additional movements with extrusion:
+    G0 X133 E.3742  F{outer_wall_volumetric_speed/(0.3*0.5)/4     * 60}
+    G0 X138 E.3742  F{outer_wall_volumetric_speed/(0.3*0.5)     * 60}
+    G0 X143 E.3742  F{outer_wall_volumetric_speed/(0.3*0.5)/4     * 60}
+    G0 X148 E.3742  F{outer_wall_volumetric_speed/(0.3*0.5)     * 60}
+    G0 X153 E.3742  F{outer_wall_volumetric_speed/(0.3*0.5)/4     * 60}
+    G91 ; Switches to relative positioning.
+    G1 X1 Z-0.300 ; Makes fine adjustment in X and Z axes.
+    G1 X4 ; Moves X by 4mm.
+    G1 Z1 F1200 ; Raises nozzle to Z = 1mm.
+    G90 ; Returns to absolute positioning.
+    M400 ; Ensures all movements are complete.
 
 M900 R ; Resets calibration parameters.
 
 M1002 judge_flag extrude_cali_flag ; Flags the extrusion calibration.
 M622 J1 ; Starts a macro or process for further calibration.
-	G90 ; Ensures absolute positioning.
-	G1 X108.000 Y1.000 F30000 ; Moves to a specific position.
-	G91 ; Switches to relative positioning.
-	G1 Z-0.700 F1200 ; Lowers nozzle by 0.7mm.
-	G90 ; Returns to absolute positioning.
-	M83 ; Ensures extruder is in relative mode.
-	; Performs extrusion along specific paths:
-	G0 X128 E10  F{outer_wall_volumetric_speed/(24/20)    * 60}
-	G0 X133 E.3742  F{outer_wall_volumetric_speed/(0.3*0.5)/4     * 60}
-	G0 X138 E.3742  F{outer_wall_volumetric_speed/(0.3*0.5)     * 60}
-	G0 X143 E.3742  F{outer_wall_volumetric_speed/(0.3*0.5)/4     * 60}
-	G0 X148 E.3742  F{outer_wall_volumetric_speed/(0.3*0.5)     * 60}
-	G0 X153 E.3742  F{outer_wall_volumetric_speed/(0.3*0.5)/4     * 60}
-	G91 ; Switches to relative positioning.
-	G1 X1 Z-0.300 ; Makes fine adjustment in X and Z axes.
-	G1 X4 ; Moves X by 4mm.
-	G1 Z1 F1200 ; Raises nozzle to Z = 1mm.
-	G90 ; Returns to absolute positioning.
-	M400 ; Ensures all movements are complete.
+    G90 ; Ensures absolute positioning.
+    G1 X108.000 Y1.000 F30000 ; Moves to a specific position.
+    G91 ; Switches to relative positioning.
+    G1 Z-0.700 F1200 ; Lowers nozzle by 0.7mm.
+    G90 ; Returns to absolute positioning.
+    M83 ; Ensures extruder is in relative mode.
+    ; Performs extrusion along specific paths:
+    G0 X128 E10  F{outer_wall_volumetric_speed/(24/20)    * 60}
+    G0 X133 E.3742  F{outer_wall_volumetric_speed/(0.3*0.5)/4     * 60}
+    G0 X138 E.3742  F{outer_wall_volumetric_speed/(0.3*0.5)     * 60}
+    G0 X143 E.3742  F{outer_wall_volumetric_speed/(0.3*0.5)/4     * 60}
+    G0 X148 E.3742  F{outer_wall_volumetric_speed/(0.3*0.5)     * 60}
+    G0 X153 E.3742  F{outer_wall_volumetric_speed/(0.3*0.5)/4     * 60}
+    G91 ; Switches to relative positioning.
+    G1 X1 Z-0.300 ; Makes fine adjustment in X and Z axes.
+    G1 X4 ; Moves X by 4mm.
+    G1 Z1 F1200 ; Raises nozzle to Z = 1mm.
+    G90 ; Returns to absolute positioning.
+    M400 ; Ensures all movements are complete.
 M623 ; Ends the macro/process.
 
 G1 Z0.2 ; Lowers nozzle to Z = 0.2mm.
@@ -598,7 +598,7 @@ M400 ; Ensures all movements are complete.
 ;===== for Textured PEI Plate , lower the nozzle as the nozzle was touching topmost of the texture when homing ==
 ;curr_bed_type={curr_bed_type} ; Checks current bed type.
 {if curr_bed_type=="Textured PEI Plate"} ; Conditional adjustment for textured plate.
-	G29.1 Z{-0.02} ; Adjusts for the plate texture.
+    G29.1 Z{-0.02} ; Adjusts for the plate texture.
 {endif}
 
 M960 S1 P0 ; turn off laser.

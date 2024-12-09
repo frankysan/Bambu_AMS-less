@@ -14,73 +14,73 @@ G1 X0 Y{first_layer_center_no_wipe_tower[1]} F18000 ; move to a safe position in
 G1 X-13.0 F3000 ; adjust the safe position further
 
 {if !spiral_mode && print_sequence != "by object"}
-	; Conditional block for timelapse or specific print sequence
+    ; Conditional block for timelapse or specific print sequence
 
-	M1002 judge_flag timelapse_record_flag ; set flag for timelapse recording
-	M622 J1 ; timelapse preparation command
-		M400 P100 ; pause briefly
-		; The following lines set up timelapse triggers multiple times for consistent setup
-		M971 S11 C11 O0
-		M400 P100
-		M971 S11 C11 O0
-		M400 P100
-		M971 S11 C11 O0
-		M400 P100
-		M971 S11 C11 O0
-		M400 P100
-		M971 S11 C11 O0
-		M400 P100
-		M971 S11 C11 O0
-		M400 P100
-		M971 S11 C11 O0
-		M400 P100
-		M971 S11 C11 O0
-		M400 P100
-		M971 S11 C11 O0
-		M400 P100
-		M971 S11 C11 O0
-		M400 P100
-		M971 S11 C11 O0
-		M400 P100
-		M971 S11 C11 O0
-		M400 P100
-		M971 S11 C11 O0
-		M400 P100
-		M971 S11 C11 O0
-		M400 P100
-		M971 S11 C11 O0
-		M400 P100
-		M971 S11 C11 O0
-		M400 P100
-		M971 S11 C11 O0
-		M400 P100
-		M971 S11 C11 O0
-		M400 P100
-		M971 S11 C11 O0
-		M400 P100
-		M971 S11 C11 O0
-		M400 P100
-		M971 S11 C11 O0
-		M400 P100
-		M971 S11 C11 O0
-		M400 P100
-		M971 S11 C11 O0
-		M400 P100
-		M971 S11 C11 O0
-		M400 P100
-		M971 S11 C11 O0
-		M400 P100
-		M971 S11 C11 O0
-		M400 P100
-		M971 S11 C11 O0
-		M400 P100
-		M971 S11 C11 O0
-		M400 P100
-		M971 S11 C11 O0
-		M400 P100
-		M971 S11 C11 O0
-		M991 S0 P-1 ; end the timelapse recording
-	M623 ; conclude the timelapse-related commands
+    M1002 judge_flag timelapse_record_flag ; set flag for timelapse recording
+    M622 J1 ; timelapse preparation command
+        M400 P100 ; pause briefly
+        ; The following lines set up timelapse triggers multiple times for consistent setup
+        M971 S11 C11 O0
+        M400 P100
+        M971 S11 C11 O0
+        M400 P100
+        M971 S11 C11 O0
+        M400 P100
+        M971 S11 C11 O0
+        M400 P100
+        M971 S11 C11 O0
+        M400 P100
+        M971 S11 C11 O0
+        M400 P100
+        M971 S11 C11 O0
+        M400 P100
+        M971 S11 C11 O0
+        M400 P100
+        M971 S11 C11 O0
+        M400 P100
+        M971 S11 C11 O0
+        M400 P100
+        M971 S11 C11 O0
+        M400 P100
+        M971 S11 C11 O0
+        M400 P100
+        M971 S11 C11 O0
+        M400 P100
+        M971 S11 C11 O0
+        M400 P100
+        M971 S11 C11 O0
+        M400 P100
+        M971 S11 C11 O0
+        M400 P100
+        M971 S11 C11 O0
+        M400 P100
+        M971 S11 C11 O0
+        M400 P100
+        M971 S11 C11 O0
+        M400 P100
+        M971 S11 C11 O0
+        M400 P100
+        M971 S11 C11 O0
+        M400 P100
+        M971 S11 C11 O0
+        M400 P100
+        M971 S11 C11 O0
+        M400 P100
+        M971 S11 C11 O0
+        M400 P100
+        M971 S11 C11 O0
+        M400 P100
+        M971 S11 C11 O0
+        M400 P100
+        M971 S11 C11 O0
+        M400 P100
+        M971 S11 C11 O0
+        M400 P100
+        M971 S11 C11 O0
+        M400 P100
+        M971 S11 C11 O0
+        M991 S0 P-1 ; end the timelapse recording
+    M623 ; conclude the timelapse-related commands
 {endif}
 
 M140 S0 ; turn off the heated bed
@@ -94,12 +94,12 @@ M106 P3 S0 ; turn off the chamber cooling fan
 ; M620 activates the AMS (Automatic Material System) if available.
 ; When AMS is not present, any code between M620 and M621 is ignored.
 M620 S255 ; prepare for filament retraction
-	G1 X267 F15000 ; move to filament ejection position
-	T255 ; select a tool (likely filament slot)
-	G1 X-28.5 F18000 ; retract filament
-	G1 X-48.2 F3000 ; additional retraction movement
-	G1 X-28.5 F18000 ; repeat to ensure filament is cleared
-	G1 X-48.2 F3000
+    G1 X267 F15000 ; move to filament ejection position
+    T255 ; select a tool (likely filament slot)
+    G1 X-28.5 F18000 ; retract filament
+    G1 X-48.2 F3000 ; additional retraction movement
+    G1 X-28.5 F18000 ; repeat to ensure filament is cleared
+    G1 X-48.2 F3000
 M621 S255 ; complete the filament retraction process
 
 M104 S0 ; turn off the hotend heater
@@ -109,11 +109,11 @@ M17 S ; enable stepper motors
 M17 Z0.4 ; reduce current to the Z-axis motor to minimize impact if obstructions exist
 
 {if (max_layer_z + 100.0) < 256}
-	G1 Z{max_layer_z + 100.0} F600 ; move Z-axis up to a safe height
-	G1 Z{max_layer_z + 98.0} ; slight adjustment
+    G1 Z{max_layer_z + 100.0} F600 ; move Z-axis up to a safe height
+    G1 Z{max_layer_z + 98.0} ; slight adjustment
 {else}
-	G1 Z256 F600 ; limit Z-axis movement to a maximum height of 256mm
-	G1 Z256
+    G1 Z256 F600 ; limit Z-axis movement to a maximum height of 256mm
+    G1 Z256
 {endif}
 
 M400 P100 ; brief pause
