@@ -1,7 +1,7 @@
 ;=== Bambu Lab A1 Filament change G-code without AMS ===
 ;=== Based on Orca Slicer default G-code ===============
 ;=== Original date: 20240830 ===========================
-;=== Modified date: 20241209 ===========================
+;=== Modified date: 20241212 ===========================
 ;=== https://github.com/frankysan/Bambu_AMS-less =======
 
 ; NOTE: "Manual Filament Change" in Orca Slicer should be enabled if you use this G-code.
@@ -32,7 +32,7 @@ G392 S0 ; Disable nozzle clog detection temporarily.
         M104 S[old_filament_temp] ; Set the hotend temperature to the required value for removing the old filament.
     {endif}
 
-    G1 X-38.2 F18000 ; Move the nozzle to the left, near the nozzle wiper.
+    G1 X-48.2 F18000 ; Move the nozzle to the left, near the nozzle wiper.
 
     ;M620.1 removed to avoid slicer error message.
     ;M620.10 A0 F[old_filament_e_feedrate] ; Confirm old filament is removed.
