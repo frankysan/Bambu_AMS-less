@@ -1,7 +1,7 @@
 ;=== Bambu Lab A1 Start of print G-code with Adaptive Purge position ===
 ;=== Based on Orca Slicer default G-code ===============================
 ;=== Original date: 20240620 ===========================================
-;=== Modified date: 20241210 ===========================================
+;=== Modified date: 20241216 ===========================================
 ;=== https://github.com/frankysan/Bambu_AMS-less =======================
 
 G392 S0 ; Stops PWM fans by setting their speed to 0.
@@ -10,7 +10,7 @@ M9833.2 ; Custom command, likely specific to the printer or firmware, possibly r
 ;M73 P1.717 ; Sets the progress of the print to 1.717% (commented out).
 
 ;===== start to heat heatbead&hotend==========
-M1002 gcode_claim_action : 2 ; Custom command to claim a specific action, possibly related to heating.
+M1002 gcode_claim_action : 2 ; Displays "Heatbed preheating" message.
 M1002 set_filament_type:{filament_type[initial_no_support_extruder]} ; Sets the filament type for the initial extruder (likely replaced dynamically by slicer).
 M104 S140 ; Sets the nozzle temperature to 140°C.
 M140 S[bed_temperature_initial_layer_single] ; Sets the heated bed temperature for the initial layer (value dynamically replaced).
@@ -66,7 +66,7 @@ M73.2R1.0 ; Resets the left time magnitude display to 1.0.
 ;====== cog noise reduction=================
 M982.2 S1 ; Enables cog noise reduction mode for smoother motor operation.
 
-M1002 gcode_claim_action : 13 ; Claims a new action, possibly related to homing or preparation.
+M1002 gcode_claim_action : 13 ; Displays "Homing toolhead" message.
 
 G28 X ; Homes the X-axis.
 G91 ; Switches to relative positioning.
@@ -99,7 +99,7 @@ M623 ; Ends the custom sequence started by M622.
 ;M73 P1.717 ; Sets print progress to 1.717% (commented out).
 
 ;===== prepare print temperature and material ==========
-M1002 gcode_claim_action : 24 ; Claims a specific action, possibly related to material preparation.
+M1002 gcode_claim_action : 24 ; Displays "Filament loading" message.
 
 M400 ; Ensures all buffered commands are completed before continuing.
 ;G392 S1 ; Enables PWM fans (commented out).
@@ -112,7 +112,7 @@ G1 X-48.2 F3000 ; Moves to X = -48.2mm at slower speed (3000 mm/min).
 
 M620 M ;enable remap ; Enables material remapping, used for AMS (Automatic Material Switching).
 M620 S[initial_no_support_extruder]A ; Selects the initial extruder (with no support material) in AMS if present.
-    M1002 gcode_claim_action : 4 ; Claims an action, possibly for filament preparation.
+    M1002 gcode_claim_action : 4 ; Displays "Changing filament" message.
     M400 ; Waits for all commands to complete.
     M1002 set_filament_type:UNKNOWN ; Temporarily sets the filament type to UNKNOWN.
     M109 S[nozzle_temperature_initial_layer] ; Sets and waits for the nozzle temperature to reach the initial layer temperature.
@@ -182,7 +182,7 @@ M1002 set_filament_type:{filament_type[initial_no_support_extruder]} ; Restores 
 M1002 judge_flag extrude_cali_flag ; Evaluates the extrusion calibration flag.
 
 M622 J1 ; Begins a calibration sequence for extrusion parameters.
-    M1002 gcode_claim_action : 8 ; Claims action 8, likely related to extrusion calibration.
+    M1002 gcode_claim_action : 8 ; Displays "Calibrating extrusion" message.
     
     M109 S{nozzle_temperature[initial_extruder]} ; Sets and waits for the nozzle temperature dynamically based on the extruder settings.
     G1 E10 F{outer_wall_volumetric_speed/2.4*60} ; Extrudes 10mm of filament at a speed based on wall volumetric speed.
@@ -241,7 +241,7 @@ M106 S255 ; turn on fan ; Turns on the main fan at full speed.
 
 ;===== mech mode fast check start =====================
 ; This section performs a fast mechanical check.
-M1002 gcode_claim_action : 3 ; Claims action 3, likely for mechanical testing.
+M1002 gcode_claim_action : 3 ; Displays "Sweeping XY mech mode" message.
 
 G1 X128 Y128 F20000 ; Moves the toolhead to X = 128, Y = 128 at high speed (20000 mm/min).
 G1 Z5 F1200 ; Moves Z-axis to 5mm at 1200 mm/min.
@@ -275,7 +275,7 @@ G1 Z4 F1200 ; Moves Z-axis to 4mm at 1200 mm/min.
 ;M73 P1.717 ; Sets print progress to 1.717% (commented out).
 
 ;===== wipe nozzle ===============================
-M1002 gcode_claim_action : 14 ; Claims action 14, likely related to nozzle wiping.
+M1002 gcode_claim_action : 14 ; Displays "Cleaning nozzle tip" message.
 
 M975 S1 ; Enables specific settings for this action.
 M106 S255 ; turn on fan (G28 has turn off fan) ; Turns the fan on at full speed.
@@ -496,7 +496,7 @@ M109 S140 ; Sets and waits for the nozzle to reach 140°C.
 M106 S0 ; turn off fan , too noisy ; Turns off the fan.
 
 M622 J1 ; Starts a macro or process (possibly related to calibration).
-    M1002 gcode_claim_action : 1 ; Claims action 1, possibly for ABL.
+    M1002 gcode_claim_action : 1 ; Displays "Auto bed levelling" message.
     G29 A1 X{first_layer_print_min[0]} Y{first_layer_print_min[1]} I{first_layer_print_size[0]} J{first_layer_print_size[1]} ; Performs a specific area-leveling process.
     M400 ; Ensures all movements are complete.
     M500 ; save cali data ; Saves the calibration data.
@@ -507,7 +507,7 @@ M623 ; Ends the macro/process.
 M1002 judge_flag g29_before_print_flag ; Flags the need for ABL before printing.
 M622 J0 ; Starts a macro or process (possibly for homing).
 
-    M1002 gcode_claim_action : 13 ; Claims action 13, likely for homing.
+    M1002 gcode_claim_action : 13 ; Displays "Homing toolhead" message.
     G28 ; Homes all axes.
 
 M623 ; Ends the macro/process.
@@ -614,7 +614,7 @@ G1 Z0.2 ; Lowers nozzle to Z = 0.2mm.
 ;M73 P1.717 ; Commented out; would set print progress to 1.717%.
 
 ;========turn off light and wait extrude temperature =============
-M1002 gcode_claim_action : 0 ; Claims action 0, possibly to idle.
+M1002 gcode_claim_action : 0 ; Unknown, possibly clear screen of messages?
 M400 ; Ensures all movements are complete.
 
 ;===== for Textured PEI Plate , lower the nozzle as the nozzle was touching topmost of the texture when homing ==
