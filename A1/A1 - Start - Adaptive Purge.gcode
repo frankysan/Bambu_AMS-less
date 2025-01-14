@@ -1,7 +1,7 @@
 ;=== Bambu Lab A1 Start of print G-code with Adaptive Purge position ===
 ;=== Based on Orca Slicer default G-code ===============================
 ;=== Original date: 20240620 ===========================================
-;=== Modified date: 20241216 ===========================================
+;=== Modified date: 20250113 ===========================================
 ;=== https://github.com/frankysan/Bambu_AMS-less =======================
 
 G392 S0 ; Stops PWM fans by setting their speed to 0.
@@ -567,7 +567,7 @@ M400 ; Ensures all movements are complete.
     G0 X5 E.3742  F{outer_wall_volumetric_speed/(0.3*0.5)/4     * 60}
     G0 X5 E.3742  F{outer_wall_volumetric_speed/(0.3*0.5)     * 60}
     G0 X5 E.3742  F{outer_wall_volumetric_speed/(0.3*0.5)/4     * 60}
-    G1 X1 Z-0.300 ; Makes fine adjustment in X and Z axes.
+    ;G1 X1 Z-0.300 ; Makes fine adjustment in X and Z axes.
     G1 X4 ; Moves X by 4mm.
     G1 Z1 F1200 ; Raises nozzle to Z = 1mm.
     G90 ; Returns to absolute positioning.
@@ -601,7 +601,7 @@ M622 J1 ; Starts a macro or process for further calibration.
     G0 X5 E.3742  F{outer_wall_volumetric_speed/(0.3*0.5)/4     * 60}
     G0 X5 E.3742  F{outer_wall_volumetric_speed/(0.3*0.5)     * 60}
     G0 X5 E.3742  F{outer_wall_volumetric_speed/(0.3*0.5)/4     * 60}
-    G1 X1 Z-0.300 ; Makes fine adjustment in X and Z axes.
+    ;G1 X1 Z-0.300 ; Makes fine adjustment in X and Z axes.
     G1 X4 ; Moves X by 4mm.
     G1 Z1 F1200 ; Raises nozzle to Z = 1mm.
     G90 ; Returns to absolute positioning.
