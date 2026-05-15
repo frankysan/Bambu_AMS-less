@@ -1,7 +1,7 @@
 ;=== Bambu Lab A1 Start of print G-code with Adaptive Purge position ===
 ;=== Based on Orca Slicer default G-code ===============================
 ;=== Original date: 20240620 ===========================================
-;=== Modified date: 20250113 ===========================================
+;=== Modified date: 20260514 ===========================================
 ;=== https://github.com/frankysan/Bambu_AMS-less =======================
 
 G392 S0 ; Stops PWM fans by setting their speed to 0.
@@ -122,7 +122,7 @@ M620 S[initial_no_support_extruder]A ; Selects the initial extruder (with no sup
     G1 X-48.2 F3000 ; Moves to X = -48.2mm at 3000 mm/min.
     M400 ; Waits for all commands to complete.
 
-    M620.1 E F{filament_max_volumetric_speed[initial_no_support_extruder]/2.4053*60} T{nozzle_temperature_range_high[initial_no_support_extruder]} ; Configures extruder for volumetric speed and temperature range.
+    M620.1 E F{flush_volumetric_speeds[initial_no_support_extruder]/2.4053*60} T{flush_temperatures[initial_no_support_extruder]} ; Configures extruder for volumetric speed and temperature range.
     M109 S250 ;set nozzle to common flush temp ; Sets and waits for the nozzle temperature to stabilize at 250°C.
     M106 P1 S0 ; Turns off fan 1 (P1).
     G92 E0 ; Resets the extruder position to zero.
@@ -131,7 +131,7 @@ M620 S[initial_no_support_extruder]A ; Selects the initial extruder (with no sup
     M1002 set_filament_type:{filament_type[initial_no_support_extruder]} ; Sets the filament type dynamically for the initial extruder.
 M621 S[initial_no_support_extruder]A ; Confirms the selected extruder and material setup in AMS.
 
-M109 S{nozzle_temperature_range_high[initial_no_support_extruder]} H300 ; Sets and waits for the nozzle to reach the high temperature range, up to 300°C.
+M109 S{flush_temperatures[initial_no_support_extruder]} H300 ; Sets and waits for the nozzle to reach the high temperature range, up to 300°C.
 G92 E0 ; Resets the extruder position to zero.
 G1 E50 F200 ; Extrudes 50mm of filament at 200 mm/min.
 M400 ; Waits for all commands to complete.

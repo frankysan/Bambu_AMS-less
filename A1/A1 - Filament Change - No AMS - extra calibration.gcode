@@ -1,7 +1,7 @@
 ;=== Bambu Lab A1 Filament change G-code without AMS ===
 ;=== Based on Orca Slicer default G-code ===============
 ;=== Original date: 20240830 ===========================
-;=== Modified date: 20241216 ===========================
+;=== Modified date: 20260514 ===========================
 ;=== https://github.com/frankysan/Bambu_AMS-less =======
 
 ; NOTE: "Manual Filament Change" in Orca Slicer should be enabled if you use this G-code.
@@ -28,8 +28,8 @@ G392 S0 ; Disable nozzle clog detection temporarily.
     M106 P2 S0 ; Turn off remote part cooling fan.
 
     ; Heat the nozzle for old filament removal.
-    {if old_filament_temp > 142 && next_extruder < 255}
-        M104 S[old_filament_temp] ; Set the hotend temperature to the required value for removing the old filament.
+    {if nozzle_temperature[previous_extruder] > 142 && next_extruder < 255}
+        M104 S{nozzle_temperature[previous_extruder]} ; Set the hotend temperature to the required value for removing the old filament.
     {endif}
 
     G1 X-48.2 F18000 ; Move the nozzle to the left, near the nozzle wiper.
@@ -58,22 +58,22 @@ G392 S0 ; Disable nozzle clog detection temporarily.
             ; FLUSH_START ; Begin flushing old material.
             M400 ; Wait for operations to complete.
             M1002 set_filament_type:UNKNOWN ; Temporarily set filament type as unknown.
-            M109 S[nozzle_temperature_range_high] ; Wait for the nozzle to reach the maximum operating temperature.
+            M109 S{flush_temperatures[next_extruder]} ; Wait for the nozzle to reach the maximum operating temperature.
             M106 P1 S60 ; Turn on part cooling fan to 60% for flushing.
 
             {if flush_length_1 > 23.7}
-                G1 E23.7 F{old_filament_e_feedrate} ; Perform initial flushing without pulsation.
+                G1 E23.7 F{flush_volumetric_speeds[previous_extruder]/2.4053*60} ; Perform initial flushing without pulsation.
                 ; Perform pulsatile flushing to clear remaining old filament.
                 G1 E{(flush_length_1 - 23.7) * 0.02} F50
-                G1 E{(flush_length_1 - 23.7) * 0.23} F{old_filament_e_feedrate}
+                G1 E{(flush_length_1 - 23.7) * 0.23} F{flush_volumetric_speeds[previous_extruder]/2.4053*60}
                 G1 E{(flush_length_1 - 23.7) * 0.02} F50
-                G1 E{(flush_length_1 - 23.7) * 0.23} F{new_filament_e_feedrate}
+                G1 E{(flush_length_1 - 23.7) * 0.23} F{flush_volumetric_speeds[next_extruder]/2.4053*60}
                 G1 E{(flush_length_1 - 23.7) * 0.02} F50
-                G1 E{(flush_length_1 - 23.7) * 0.23} F{new_filament_e_feedrate}
+                G1 E{(flush_length_1 - 23.7) * 0.23} F{flush_volumetric_speeds[next_extruder]/2.4053*60}
                 G1 E{(flush_length_1 - 23.7) * 0.02} F50
-                G1 E{(flush_length_1 - 23.7) * 0.23} F{new_filament_e_feedrate}
+                G1 E{(flush_length_1 - 23.7) * 0.23} F{flush_volumetric_speeds[next_extruder]/2.4053*60}
             {else}
-                G1 E{flush_length_1} F{old_filament_e_feedrate} ; Simple flush if length is small.
+                G1 E{flush_length_1} F{flush_volumetric_speeds[previous_extruder]/2.4053*60} ; Simple flush if length is small.
             {endif}
 
             ; FLUSH_END
@@ -101,15 +101,15 @@ G392 S0 ; Disable nozzle clog detection temporarily.
         {if flush_length_2 > 1}
             M106 P1 S60 ; Turn on part cooling fan for second flush.
             ; FLUSH_START ; Begin second flushing phase.
-            G1 E{flush_length_2 * 0.18} F{new_filament_e_feedrate}
+            G1 E{flush_length_2 * 0.18} F{flush_volumetric_speeds[next_extruder]/2.4053*60}
             G1 E{flush_length_2 * 0.02} F50
-            G1 E{flush_length_2 * 0.18} F{new_filament_e_feedrate}
+            G1 E{flush_length_2 * 0.18} F{flush_volumetric_speeds[next_extruder]/2.4053*60}
             G1 E{flush_length_2 * 0.02} F50
-            G1 E{flush_length_2 * 0.18} F{new_filament_e_feedrate}
+            G1 E{flush_length_2 * 0.18} F{flush_volumetric_speeds[next_extruder]/2.4053*60}
             G1 E{flush_length_2 * 0.02} F50
-            G1 E{flush_length_2 * 0.18} F{new_filament_e_feedrate}
+            G1 E{flush_length_2 * 0.18} F{flush_volumetric_speeds[next_extruder]/2.4053*60}
             G1 E{flush_length_2 * 0.02} F50
-            G1 E{flush_length_2 * 0.18} F{new_filament_e_feedrate}
+            G1 E{flush_length_2 * 0.18} F{flush_volumetric_speeds[next_extruder]/2.4053*60}
             G1 E{flush_length_2 * 0.02} F50
             ; FLUSH_END
             G1 E-[new_retract_length_toolchange] F1800 ; Retract filament.
@@ -136,15 +136,15 @@ G392 S0 ; Disable nozzle clog detection temporarily.
         {if flush_length_3 > 1}
             M106 P1 S60
             ; FLUSH_START
-            G1 E{flush_length_3 * 0.18} F{new_filament_e_feedrate}
+            G1 E{flush_length_3 * 0.18} F{flush_volumetric_speeds[next_extruder]/2.4053*60}
             G1 E{flush_length_3 * 0.02} F50
-            G1 E{flush_length_3 * 0.18} F{new_filament_e_feedrate}
+            G1 E{flush_length_3 * 0.18} F{flush_volumetric_speeds[next_extruder]/2.4053*60}
             G1 E{flush_length_3 * 0.02} F50
-            G1 E{flush_length_3 * 0.18} F{new_filament_e_feedrate}
+            G1 E{flush_length_3 * 0.18} F{flush_volumetric_speeds[next_extruder]/2.4053*60}
             G1 E{flush_length_3 * 0.02} F50
-            G1 E{flush_length_3 * 0.18} F{new_filament_e_feedrate}
+            G1 E{flush_length_3 * 0.18} F{flush_volumetric_speeds[next_extruder]/2.4053*60}
             G1 E{flush_length_3 * 0.02} F50
-            G1 E{flush_length_3 * 0.18} F{new_filament_e_feedrate}
+            G1 E{flush_length_3 * 0.18} F{flush_volumetric_speeds[next_extruder]/2.4053*60}
             G1 E{flush_length_3 * 0.02} F50
             ; FLUSH_END
             G1 E-[new_retract_length_toolchange] F1800
@@ -169,15 +169,15 @@ G392 S0 ; Disable nozzle clog detection temporarily.
         {if flush_length_4 > 1}
             M106 P1 S60
             ; FLUSH_START
-            G1 E{flush_length_4 * 0.18} F{new_filament_e_feedrate}
+            G1 E{flush_length_4 * 0.18} F{flush_volumetric_speeds[next_extruder]/2.4053*60}
             G1 E{flush_length_4 * 0.02} F50
-            G1 E{flush_length_4 * 0.18} F{new_filament_e_feedrate}
+            G1 E{flush_length_4 * 0.18} F{flush_volumetric_speeds[next_extruder]/2.4053*60}
             G1 E{flush_length_4 * 0.02} F50
-            G1 E{flush_length_4 * 0.18} F{new_filament_e_feedrate}
+            G1 E{flush_length_4 * 0.18} F{flush_volumetric_speeds[next_extruder]/2.4053*60}
             G1 E{flush_length_4 * 0.02} F50
-            G1 E{flush_length_4 * 0.18} F{new_filament_e_feedrate}
+            G1 E{flush_length_4 * 0.18} F{flush_volumetric_speeds[next_extruder]/2.4053*60}
             G1 E{flush_length_4 * 0.02} F50
-            G1 E{flush_length_4 * 0.18} F{new_filament_e_feedrate}
+            G1 E{flush_length_4 * 0.18} F{flush_volumetric_speeds[next_extruder]/2.4053*60}
             G1 E{flush_length_4 * 0.02} F50
             ; FLUSH_END
         {endif}
@@ -186,8 +186,8 @@ G392 S0 ; Disable nozzle clog detection temporarily.
 
         M400 ; Wait for operations to complete.
         M106 P1 S60 ; Turn on part cooling fan.
-        M109 S[new_filament_temp] ; Set nozzle temperature for the new filament.
-        G1 E6 F{new_filament_e_feedrate} ; Extrude extra material to ensure flow.
+        M109 S{nozzle_temperature[next_extruder]} ; Set nozzle temperature for the new filament.
+        G1 E6 F{flush_volumetric_speeds[next_extruder]/2.4053*60} ; Extrude extra material to ensure flow.
         M400 ; Wait for completion.
         G92 E0 ; Reset extruder position.
         G1 E-[new_retract_length_toolchange] F1800 ; Retract filament to prepare for wiping.
